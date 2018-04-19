@@ -1,0 +1,12 @@
+name: CpsCounter
+main: ldcr.CpsCounter.CpsCounter
+version: 1.0.0
+author: Ldcr
+depend: ["LdcrUtils"]
+commands:
+  cps:
+    description: get other player cps
+    usage: /cps
+permissions:
+  cpscounter.cps:
+    default: op
