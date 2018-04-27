@@ -34,7 +34,10 @@ public class CpsCounter extends JavaPlugin implements Listener {
     public void onClick(final PlayerInteractEvent e) {
 	if (e.getAction().toString().startsWith("LEFT_CLICK_")) {
 	    final Counter c = getCounter(e.getPlayer());
-	    c.countCPS();
+	    c.countLeftCPS();
+	} else if (e.getAction().toString().startsWith("RIGHT_CLICK_")) {
+	    final Counter c = getCounter(e.getPlayer());
+	    c.countRightCPS();
 	}
     }
     @EventHandler

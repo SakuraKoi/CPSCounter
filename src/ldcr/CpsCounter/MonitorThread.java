@@ -27,7 +27,11 @@ public class MonitorThread implements Runnable {
 	    stopMonitor();
 	    return;
 	}
-	ActionBarUtils.sendActionBar(player, "§b玩家 §a"+target.getName()+"§b 当前CPS §e"+counter.getCPS()+"§b 最大CPS §d"+counter.getMaxCPS()+"§b 上次点击于 §e"+counter.getLastClickMs()+"ms§b 前");
+	ActionBarUtils.sendActionBar(player,
+		"§4§l玩家 §a"+target.getName()+" "+
+			"§6§l | §4§lCPS §c§l"+(counter.getLastClickMs()>1000 ? 0 : counter.getCPS())+"§4 / §1§l"+counter.getMaxCPS()+
+			"§6§l | §4§lLCS §c§l"+(counter.getLeftLastClickMs()>1000 ? 0 : counter.getLeftCPS())+"§4 / §1§l"+counter.getLeftMaxCPS()+
+			"§6§l | §4§lRCS §c§l"+(counter.getRightLastClickMs()>1000 ? 0 : counter.getRightCPS())+"§4 / §1§l"+counter.getRightMaxCPS());
     }
 
     public void stopMonitor() {
