@@ -1,6 +1,7 @@
 package ldcr.CpsCounter;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
@@ -13,13 +14,14 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 public class CpsCounter extends JavaPlugin implements Listener {
     public static CpsCounter instance;
-    private static HashMap<UUID, Counter> counter = new HashMap<UUID, Counter>();
-    private static HashMap<UUID, MonitorThread> monitors = new HashMap<UUID,MonitorThread>();
+    private final HashMap<UUID, Counter> counter = new HashMap<UUID, Counter>();
+    private final HashMap<UUID, MonitorThread> monitors = new HashMap<UUID,MonitorThread>();
+    private final HashSet<Player> silentPlayer = new HashSet<Player>();
     public static Counter getCounter(final Player p) {
-	Counter c = counter.get(p.getUniqueId());
+	Counter c = instance.counter.get(p.getUniqueId());
 	if (c == null) {
 	    c = new Counter(p);
-	    counter.put(p.getUniqueId(), c);
+	    instance.counter.put(p.getUniqueId(), c);
 	}
 	return c;
     }
@@ -46,20 +48,31 @@ public class CpsCounter extends JavaPlugin implements Listener {
     }
 
     public static void startMonitor(final Player player,final Player target) {
-	if (monitors.containsKey(player.getUniqueId())) {
-	    monitors.get(player.getUniqueId()).stopMonitor();
+	if (instance.monitors.containsKey(player.getUniqueId())) {
+	    instance.monitors.get(player.getUniqueId()).stopMonitor();
 	}
 	final MonitorThread mon = new MonitorThread(player,target);
-	monitors.put(player.getUniqueId(), mon);
+	instance.monitors.put(player.getUniqueId(), mon);
 	mon.startMonitor();
     }
     public static boolean isMoniting(final Player player) {
-	return monitors.containsKey(player.getUniqueId());
+	return instance.monitors.containsKey(player.getUniqueId());
     }
     public static void stopMoniting(final Player player) {
-	if (monitors.containsKey(player.getUniqueId())) {
-	    monitors.get(player.getUniqueId()).stopMonitor();
-	    monitors.remove(player.getUniqueId());
+	if (instance.monitors.containsKey(player.getUniqueId())) {
+	    instance.monitors.get(player.getUniqueId()).stopMonitor();
+	    instance.monitors.remove(player.getUniqueId());
 	}
+    }
+    public static boolean isSilent(final Player player) {
+	return instance.silentPlayer.contains(player);
+    }
+    public static boolean switchSilent(final Player player) {
+	if (instance.silentPlayer.contains(player)) {
+	    instance.silentPlayer.remove(player);
+	    return false;
+	}
+	instance.silentPlayer.add(player);
+	return true;
     }
 }

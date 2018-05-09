@@ -16,7 +16,7 @@ public class CPSCommand implements CommandExecutor {
 	    sender.sendMessage("§b§lCPS §7>> §e/cps #mon <玩家>  监视玩家的CPS值");
 	} else {
 	    String player = args[0];
-	    if (args[0].equals("#mon")) {
+	    if (args[0].equalsIgnoreCase("#mon")) {
 		if (!(sender instanceof Player)) {
 		    sender.sendMessage("§b§lCPS §7>> §c错误: 您必须登入游戏才能使用CPS监视模式.");
 		    return true;
@@ -25,13 +25,13 @@ public class CPSCommand implements CommandExecutor {
 		    sender.sendMessage("§b§lCPS §7>> §c你没有权限执行此命令");
 		    return true;
 		}
+		if (CpsCounter.isMoniting((Player) sender)) {
+		    CpsCounter.stopMoniting((Player) sender);
+		    sender.sendMessage("§b§lCPS §7>> §a监视已停止");
+		    return true;
+		}
 		if (args.length!=2) {
-		    if (CpsCounter.isMoniting((Player) sender)) {
-			CpsCounter.stopMoniting((Player) sender);
-			sender.sendMessage("§b§lCPS §7>> §a监视已停止");
-		    } else {
-			sender.sendMessage("§b§lCPS §7>> §e/cps #mon <玩家>  监视玩家的CPS值");
-		    }
+		    sender.sendMessage("§b§lCPS §7>> §e/cps #mon <玩家>  监视玩家的CPS值");
 		    return true;
 		}
 		player = args[1];
@@ -40,6 +40,20 @@ public class CPSCommand implements CommandExecutor {
 		CpsCounter.startMonitor((Player) sender, p);
 		sender.sendMessage("§b§lCPS §7>> §a开始监视玩家 "+p.getName());
 		return true;
+	    } else if (args[0].equalsIgnoreCase("#silent")) {
+		if (!(sender instanceof Player))
+		    return true;
+		if (!sender.hasPermission("cpscounter.cps")) {
+		    sender.sendMessage("§b§lCPS §7>> §c你没有权限执行此命令");
+		    return true;
+		}
+		if (CpsCounter.switchSilent((Player) sender)) {
+		    sender.sendMessage("§b§lCPS §7>> §cCPS自动警告已对您关闭");
+		    return true;
+		} else {
+		    sender.sendMessage("§b§lCPS §7>> §aCPS自动警告已开启");
+		    return true;
+		}
 	    }
 	    final Player p = getPlayer(sender, player);
 	    if (p==null) return true;

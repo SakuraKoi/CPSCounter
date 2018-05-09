@@ -10,6 +10,7 @@ public class Counter {
     private final ArrayList<Long> counterLeftCPS = new ArrayList<Long>();
     private int maxRightCPS = 0;
     private int maxLeftCPS = 0;
+    private int maxCPS = 0;
     private final Player player;
     public Counter(final Player p) {
 	player = p;
@@ -19,6 +20,9 @@ public class Counter {
 	removeRightCPSTimeout();
 	if (counterRightCPS.size() > maxRightCPS) {
 	    maxRightCPS = counterRightCPS.size();
+	}
+	if ((getLeftCPS()+getRightCPS()) > maxCPS) {
+	    maxCPS = getLeftCPS() + getRightCPS();
 	}
 	if (counterRightCPS.size() > 18) {
 	    if (!player.hasPermission("cpscounter.cps")) {
@@ -32,6 +36,9 @@ public class Counter {
 	removeLeftCPSTimeout();
 	if (counterLeftCPS.size() > maxLeftCPS) {
 	    maxLeftCPS = counterLeftCPS.size();
+	}
+	if ((getLeftCPS()+getRightCPS()) > maxCPS) {
+	    maxCPS = getLeftCPS() + getRightCPS();
 	}
 	if (counterLeftCPS.size() > 18) {
 	    if (!player.hasPermission("cpscounter.cps")) {
@@ -56,7 +63,7 @@ public class Counter {
 	return maxLeftCPS;
     }
     public int getMaxCPS() {
-	return getRightMaxCPS() + getLeftMaxCPS();
+	return maxCPS;
     }
     public long getRightLastClickMs() {
 	if (counterRightCPS.isEmpty()) return -1;
@@ -85,11 +92,13 @@ public class Counter {
 
 	    @Override
 	    public void run() {
+		if (!player.isOnline()) return;
 		if (System.currentTimeMillis() > timeout) {
 		    timeout = System.currentTimeMillis()+5000;
 		    for (final Player op : Bukkit.getOnlinePlayers()) {
 			if (op.hasPermission("cpscounter.cps")) {
-			    op.sendMessage("§b[CPS] §c玩家 "+player.getName()+" 点击速度异常"+
+			    if (CpsCounter.isSilent(op)) return;
+			    op.sendMessage("§b[CPS] §c玩家 "+player.getName()+" 建议检查是否连点"+
 				    "§b | §cCPS §e"+getCPS()+"§c / §d"+getMaxCPS()+
 				    "§b | §cRCS §e"+getRightCPS() +"§c / §d"+ getRightMaxCPS()+
 				    "§b | §cLCS §e"+getLeftCPS() +"§c / §d"+getLeftMaxCPS());
