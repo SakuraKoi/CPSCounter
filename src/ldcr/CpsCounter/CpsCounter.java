@@ -13,66 +13,67 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class CpsCounter extends JavaPlugin implements Listener {
-    public static CpsCounter instance;
-    private final HashMap<UUID, Counter> counter = new HashMap<UUID, Counter>();
-    private final HashMap<UUID, MonitorThread> monitors = new HashMap<UUID,MonitorThread>();
-    private final HashSet<Player> silentPlayer = new HashSet<Player>();
-    public static Counter getCounter(final Player p) {
-	Counter c = instance.counter.get(p.getUniqueId());
-	if (c == null) {
-	    c = new Counter(p);
-	    instance.counter.put(p.getUniqueId(), c);
+	public static CpsCounter instance;
+	private final HashMap<UUID, Counter> counter = new HashMap<UUID, Counter>();
+	private final HashMap<UUID, MonitorThread> monitors = new HashMap<UUID,MonitorThread>();
+	private final HashSet<Player> silentPlayer = new HashSet<Player>();
+	public static Counter getCounter(final Player p) {
+		Counter c = instance.counter.get(p.getUniqueId());
+		if (c == null) {
+			c = new Counter(p);
+			instance.counter.put(p.getUniqueId(), c);
+		}
+		return c;
 	}
-	return c;
-    }
-    @Override
-    public void onEnable() {
-	instance = this;
-	Bukkit.getPluginManager().registerEvents(this, this);
-	getCommand("cps").setExecutor(new CPSCommand());
-    }
+	@Override
+	public void onEnable() {
+		instance = this;
+		Bukkit.getPluginManager().registerEvents(this, this);
+		getCommand("cps").setExecutor(new CPSCommand());
+	}
 
-    @EventHandler
-    public void onClick(final PlayerInteractEvent e) {
-	if (e.getAction().toString().startsWith("LEFT_CLICK_")) {
-	    final Counter c = getCounter(e.getPlayer());
-	    c.countLeftCPS();
-	} else if (e.getAction().toString().startsWith("RIGHT_CLICK_")) {
-	    final Counter c = getCounter(e.getPlayer());
-	    c.countRightCPS();
+	@EventHandler
+	public void onClick(final PlayerInteractEvent e) {
+		if (e.getAction().toString().startsWith("LEFT_CLICK_")) {
+			if (e.isCancelled()) return;
+			final Counter c = getCounter(e.getPlayer());
+			c.countLeftCPS();
+		} else if (e.getAction().toString().startsWith("RIGHT_CLICK_")) {
+			final Counter c = getCounter(e.getPlayer());
+			c.countRightCPS();
+		}
 	}
-    }
-    @EventHandler
-    public void onLogout(final PlayerQuitEvent e) {
-	counter.remove(e.getPlayer().getUniqueId());
-    }
+	@EventHandler
+	public void onLogout(final PlayerQuitEvent e) {
+		counter.remove(e.getPlayer().getUniqueId());
+	}
 
-    public static void startMonitor(final Player player,final Player target) {
-	if (instance.monitors.containsKey(player.getUniqueId())) {
-	    instance.monitors.get(player.getUniqueId()).stopMonitor();
+	public static void startMonitor(final Player player,final Player target) {
+		if (instance.monitors.containsKey(player.getUniqueId())) {
+			instance.monitors.get(player.getUniqueId()).stopMonitor();
+		}
+		final MonitorThread mon = new MonitorThread(player,target);
+		instance.monitors.put(player.getUniqueId(), mon);
+		mon.startMonitor();
 	}
-	final MonitorThread mon = new MonitorThread(player,target);
-	instance.monitors.put(player.getUniqueId(), mon);
-	mon.startMonitor();
-    }
-    public static boolean isMoniting(final Player player) {
-	return instance.monitors.containsKey(player.getUniqueId());
-    }
-    public static void stopMoniting(final Player player) {
-	if (instance.monitors.containsKey(player.getUniqueId())) {
-	    instance.monitors.get(player.getUniqueId()).stopMonitor();
-	    instance.monitors.remove(player.getUniqueId());
+	public static boolean isMoniting(final Player player) {
+		return instance.monitors.containsKey(player.getUniqueId());
 	}
-    }
-    public static boolean isSilent(final Player player) {
-	return instance.silentPlayer.contains(player);
-    }
-    public static boolean switchSilent(final Player player) {
-	if (instance.silentPlayer.contains(player)) {
-	    instance.silentPlayer.remove(player);
-	    return false;
+	public static void stopMoniting(final Player player) {
+		if (instance.monitors.containsKey(player.getUniqueId())) {
+			instance.monitors.get(player.getUniqueId()).stopMonitor();
+			instance.monitors.remove(player.getUniqueId());
+		}
 	}
-	instance.silentPlayer.add(player);
-	return true;
-    }
+	public static boolean isSilent(final Player player) {
+		return instance.silentPlayer.contains(player);
+	}
+	public static boolean switchSilent(final Player player) {
+		if (instance.silentPlayer.contains(player)) {
+			instance.silentPlayer.remove(player);
+			return false;
+		}
+		instance.silentPlayer.add(player);
+		return true;
+	}
 }
