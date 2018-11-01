@@ -12,11 +12,13 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import lombok.Getter;
+
 public class CpsCounter extends JavaPlugin implements Listener {
-	public static CpsCounter instance;
-	private final HashMap<UUID, Counter> counter = new HashMap<UUID, Counter>();
-	private final HashMap<UUID, MonitorThread> monitors = new HashMap<UUID,MonitorThread>();
-	private final HashSet<Player> silentPlayer = new HashSet<Player>();
+	@Getter private static CpsCounter instance;
+	private final HashMap<UUID, Counter> counter = new HashMap<>();
+	private final HashMap<UUID, MonitorThread> monitors = new HashMap<>();
+	private final HashSet<Player> silentPlayer = new HashSet<>();
 	public static Counter getCounter(final Player p) {
 		Counter c = instance.counter.get(p.getUniqueId());
 		if (c == null) {
@@ -25,6 +27,7 @@ public class CpsCounter extends JavaPlugin implements Listener {
 		}
 		return c;
 	}
+
 	@Override
 	public void onEnable() {
 		instance = this;

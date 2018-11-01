@@ -1,6 +1,6 @@
 name: CpsCounter
 main: ldcr.CpsCounter.CpsCounter
-version: 1.0.0
+version: 2
 author: Ldcr
 depend: ["LdcrUtils"]
 commands:
