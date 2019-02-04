@@ -1,10 +1,8 @@
-package ldcr.CpsCounter;
+package sakura.kooi.CpsCounter;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitTask;
-
-import ldcr.Utils.Bukkit.ActionBarUtils;
 
 public class MonitorThread implements Runnable {
 	private final Player player;
@@ -20,11 +18,11 @@ public class MonitorThread implements Runnable {
 	@Override
 	public void run() {
 		if (!player.isOnline()) {
-			stopMonitor();
+			CpsCounter.stopMoniting(player);
 			return;
 		}
 		if (!target.isOnline()) {
-			stopMonitor();
+			CpsCounter.stopMoniting(player);
 			return;
 		}
 		ActionBarUtils.sendActionBar(player,

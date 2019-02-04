@@ -1,12 +1,13 @@
 name: CpsCounter
-main: ldcr.CpsCounter.CpsCounter
-version: 2
-author: Ldcr
-depend: ["LdcrUtils"]
+main: sakura.kooi.CpsCounter.CpsCounter
+version: 3
+author: SakuraKooi
 commands:
   cps:
     description: get other player cps
     usage: /cps
 permissions:
   cpscounter.cps:
+    default: op
+  cpscounter.bypass:
     default: op

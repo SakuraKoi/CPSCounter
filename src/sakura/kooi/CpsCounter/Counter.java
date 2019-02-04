@@ -1,4 +1,4 @@
-package ldcr.CpsCounter;
+package sakura.kooi.CpsCounter;
 
 import java.util.ArrayList;
 
@@ -24,7 +24,7 @@ public class Counter {
 		if (getLeftCPS()+getRightCPS() > maxCPS) {
 			maxCPS = getLeftCPS() + getRightCPS();
 		}
-		if (counterRightCPS.size() > 18 && !player.hasPermission("cpscounter.cps")) {
+		if (counterRightCPS.size() > 18 && !player.hasPermission("cpscounter.bypass")) {
 			warnOP();
 		}
 	}
@@ -38,7 +38,7 @@ public class Counter {
 		if (getLeftCPS()+getRightCPS() > maxCPS) {
 			maxCPS = getLeftCPS() + getRightCPS();
 		}
-		if (counterLeftCPS.size() > 18 && !player.hasPermission("cpscounter.cps")) {
+		if (counterLeftCPS.size() > 18 && !player.hasPermission("cpscounter.bypass")) {
 			warnOP();
 		}
 	}

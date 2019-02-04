@@ -1,4 +1,4 @@
-package ldcr.CpsCounter;
+package sakura.kooi.CpsCounter;
 
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;

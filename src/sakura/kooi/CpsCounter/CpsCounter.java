@@ -1,4 +1,4 @@
-package ldcr.CpsCounter;
+package sakura.kooi.CpsCounter;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -31,6 +31,7 @@ public class CpsCounter extends JavaPlugin implements Listener {
 	@Override
 	public void onEnable() {
 		instance = this;
+		new Metrics(this);
 		Bukkit.getPluginManager().registerEvents(this, this);
 		getCommand("cps").setExecutor(new CPSCommand());
 	}
